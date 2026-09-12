@@ -1,0 +1,16 @@
+{
+  "name": "Tech.Geran.TinyNakama",
+  "rootNamespace": "TinyNakama",
+  "references": [
+    "Unity.Newtonsoft.Json"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
