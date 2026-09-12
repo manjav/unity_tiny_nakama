@@ -1,0 +1,10 @@
+{
+  "name": "tech.geran.unity-tiny-nakama",
+  "version": "1.0.0",
+  "displayName": "Unity Tiny Nakama",
+  "description": "Lightweight Nakama client for Unity.",
+  "unity": "6.0.78f1",
+  "author": {
+    "name": "ManJav"
+  }
+}
