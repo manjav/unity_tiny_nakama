@@ -7,8 +7,10 @@ namespace TinyNakama
     public sealed class NakamaSettings
     {
         [SerializeField] private int timeoutSeconds = 30;
-        public string BaseUrl => NakamaSecrets.BaseUrl.TrimEnd('/');
-        public string ServerKey => NakamaSecrets.ServerKey;
+        [SerializeField] private string url = "https://";
+        [SerializeField] private string serverKey = "default-server-key";
+        public string BaseUrl => url.TrimEnd('/');
+        public string ServerKey => serverKey;
         public int TimeoutSeconds => timeoutSeconds;
 
         internal void Validate()

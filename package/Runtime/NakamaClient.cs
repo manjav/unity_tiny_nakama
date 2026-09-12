@@ -15,9 +15,9 @@ namespace TinyNakama
 
         private readonly NakamaSettings settings;
         public string sessionToken;
-        public NakamaClient(NakamaSettings settings = null)
+        public NakamaClient(NakamaSettings settings)
         {
-            this.settings = settings ?? new NakamaSettings();
+            this.settings = settings;
             this.settings.Validate();
             IAPHelper = new IAPHelper(this);
             AccountHelper = new AccountHelper(this);
@@ -57,7 +57,7 @@ namespace TinyNakama
                 request.timeout = settings.TimeoutSeconds;
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Accept", "application/json");
-                request.SetRequestHeader("Authorization", requiresSession ? $"Bearer {sessionToken}" : $"Basic {Utils.ToBase64(settings.ServerKey)}");
+                request.SetRequestHeader("Authorization", requiresSession ? $"Bearer {sessionToken}" : $"Basic {ToBase64(settings.ServerKey)}");
 
                 var operation = request.SendWebRequest();
                 while (!operation.isDone) await Task.Yield();
@@ -102,5 +102,8 @@ namespace TinyNakama
                 throw new NakamaException($"RPC '{rpcId}' failed: {result.message}", 200, response, false, (NakamaStatus)result.status);
             }
         }
+
+        private static string ToBase64(string serverKey) => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{serverKey}:"));
+
     }
 }

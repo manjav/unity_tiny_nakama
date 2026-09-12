@@ -54,24 +54,31 @@ namespace TinyNakama.Helpers
     {
         public AccountHelper(NakamaClient client) : base(client) { }
 
-        public async Task<NakamaAuthenticationResult> AuthenticateCustom(Metadata metadata)
+        public async Task<NakamaAuthenticationResult> AuthenticateCustom(string id,
+        string device,
+         string displayName,
+         string avatarUrl,
+         string location,
+         string timezone,
+         string store,
+        string firstVersion,
+         string latestVersion,
+         string langTag)
         {
-            if (metadata == null) throw new ArgumentNullException(nameof(metadata));
-            Debug.Log("NAKAMA AuthenticateCustomAsync");
             var payload = new CustomAuthenticationRequest
             {
-                id = metadata.Get(Stat.Id),
+                id = id,
                 vars = new AuthenticationVars
                 {
-                    device = Utils.GetDeviceInfo(),
-                    displayName = metadata.Get(Stat.Name),
-                    avatarUrl = metadata.Get(Stat.AvatarUrl),
-                    location = metadata.Get(Stat.Location),
-                    timezone = metadata.Get(Stat.Timezone),
-                    store = metadata.Get(Stat.Store),
-                    first_version = metadata.Get(Stat.FirstVersion),
-                    latest_version = metadata.Get(Stat.LatestVersion),
-                    langTag = metadata.Get(Stat.LangTag),
+                    device = device,
+                    displayName = displayName,
+                    avatarUrl = avatarUrl,
+                    location = location,
+                    timezone = timezone,
+                    store = store,
+                    first_version = firstVersion,
+                    latest_version = latestVersion,
+                    langTag = langTag,
                 }
             };
 

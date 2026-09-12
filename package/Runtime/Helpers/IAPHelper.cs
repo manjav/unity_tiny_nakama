@@ -39,7 +39,7 @@ namespace TinyNakama.Helpers
     {
         public IAPHelper(NakamaClient client) : base(client) { }
 
-        public async Task<IAPVerifyData> Verify(string receipt, string productId, string transactionId, List<KVPair<Stat, int>> payout, string currencyCode, decimal localPrice)
+        public async Task<IAPVerifyData> Verify(string receipt, string productId, string transactionId, Dictionary<string, int> payout, string currencyCode, decimal localPrice)
         {
             if (string.IsNullOrEmpty(receipt))
             {
@@ -50,7 +50,7 @@ namespace TinyNakama.Helpers
             var payloadJson = JsonConvert.SerializeObject(new Dictionary<string, object>
             {
                 ["receipt"] = receipt,
-                ["payout"] = ToPayoutMap(payout),
+                ["payout"] = payout,
                 ["currency_code"] = currencyCode,
                 ["local_price"] = localPrice,
             });
@@ -68,20 +68,6 @@ namespace TinyNakama.Helpers
                     + $"\nResponseBody: {e.ResponseBody}");
                 return new IAPVerifyData { failure = e.Message, networkError = e.IsNetworkError };
             }
-        }
-
-        private static Dictionary<string, int> ToPayoutMap(List<KVPair<Stat, int>> payout)
-        {
-            var map = new Dictionary<string, int>();
-            if (payout == null)
-                return map;
-
-            foreach (var pair in payout)
-            {
-                var name = pair.Key.ToName();
-                map[name] = map.TryGetValue(name, out var current) ? current + pair.Value : pair.Value;
-            }
-            return map;
         }
 
         private IAPVerifyData Parse(string response, string productId, string transactionId)
