@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "displayName": "Unity Tiny Nakama",
   "description": "Lightweight Nakama client for Unity.",
-  "unity": "6.0.78f1",
+  "unity": "6.0",
   "author": {
     "name": "ManJav"
   }
