@@ -13,7 +13,13 @@ namespace TinyNakama.Helpers
             var path = $"/v2/leaderboard/{Uri.EscapeDataString(leaderboardId)}?limit={limit}";
             if (!string.IsNullOrEmpty(cursor)) path += $"&cursor={Uri.EscapeDataString(cursor)}";
             var response = await client.SendAsync(UnityWebRequest.kHttpVerbGET, path);
-            return NakamaClient.Deserialize<NakamaLeaderboardList>(response, "leaderboard list");
+            
+            var records = NakamaClient.Deserialize<NakamaLeaderboardList>(response, "leaderboard list");
+            foreach (var record in records.records)
+            {
+                record.metaData = NakamaClient.Deserialize<LeaderboardMetadata>(record.metadata, "leaderboard metadata");
+            }
+            return records;
         }
 
         public async Task<NakamaLeaderboardList> GetAroundOwner(string leaderboardId, string ownerId, int limit = 3)
@@ -38,6 +44,7 @@ namespace TinyNakama.Helpers
         public string createTime;
         public string updateTime;
         public string expiryTime;
+        public LeaderboardMetadata metaData;
     }
 
     [Serializable]
@@ -46,5 +53,12 @@ namespace TinyNakama.Helpers
         public NakamaLeaderboardRecord[] records;
         public string nextCursor;
         public string prevCursor;
+    }
+
+    [Serializable]
+    public sealed class LeaderboardMetadata
+    {
+        public int avatarUrl;
+        public string displayName,location;
     }
 }
