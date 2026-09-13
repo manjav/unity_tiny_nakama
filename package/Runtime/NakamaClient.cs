@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using TinyNakama.Helpers;
 using UnityEngine.Networking;
 using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace TinyNakama
 {
@@ -72,11 +74,18 @@ namespace TinyNakama
             }
         }
 
-        public static T Deserialize<T>(string response, string operation)
+        public static T Deserialize<T>(string response, string operation, bool snakeMoed = false)
         {
             try
             {
-                return JsonUtility.FromJson<T>(response);
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new DefaultContractResolver()
+                    {
+                        NamingStrategy = snakeMoed ? new SnakeCaseNamingStrategy() : null
+                    }
+                };
+                return JsonConvert.DeserializeObject<T>(response, settings);
             }
             catch (Exception e)
             {
