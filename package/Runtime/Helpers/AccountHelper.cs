@@ -19,20 +19,71 @@ namespace TinyNakama.Helpers
     [Serializable]
     public sealed class AuthenticationVars
     {
-        public string device, displayName, avatarUrl, location, timezone, store, first_version, latest_version, langTag;
+        public string device, displayName, avatarUrl, location, timezone, store, firstVersion, latestVersion, langTag;
     }
 
     [Serializable]
-    public sealed class NakamaAuthenticationResult
+    public sealed class AuthenticationResult
     {
         public string token;
-        public string refresh_token;
+        public string refreshToken;
         public bool created;
     }
 
-    public class AccountVariant
+
+    [Serializable]
+    public class AccountResponse
     {
-        public string name = "", value = "A";
+        public int status;
+        public string message;
+        public Account data;
+    }
+
+    [Serializable]
+    public class Account
+    {
+        public AccountUser user;
+        public Dictionary<string, long> wallet;
+        public string customId;
+    }
+
+    [Serializable]
+    public class AccountUser
+    {
+        public string langTag;
+        public string timezone;
+        public AccountMetadata metadata;
+        public string displayName;
+        public string location;
+        public long createTime;
+        public long updateTime;
+        public string username;
+        public string avatarUrl;
+        public string userId;
+        public bool online;
+        public int edgeCount;
+    }
+
+    [Serializable]
+    public class AccountMetadata
+    {
+        public string lastOffer;
+        public string variantName;
+        public string firstVersion;
+        public string variantValue;
+        public string latestVersion;
+        public string store;
+        public List<AccountDevice> devices;
+    }
+
+    [Serializable]
+    public class AccountDevice
+    {
+        public string model;
+        public string platform;
+        public string os;
+        public string name;
+        public string type;
     }
 
     public class FacebookLoginResult
@@ -52,9 +103,10 @@ namespace TinyNakama.Helpers
 
     public class AccountHelper : NakamaHelper
     {
+        public Account account = null;
         public AccountHelper(NakamaClient client) : base(client) { }
 
-        public async Task<NakamaAuthenticationResult> AuthenticateCustom(string id,
+        public async Task<AuthenticationResult> AuthenticateCustom(string id,
         string device,
          string displayName,
          string avatarUrl,
@@ -76,15 +128,15 @@ namespace TinyNakama.Helpers
                     location = location,
                     timezone = timezone,
                     store = store,
-                    first_version = firstVersion,
-                    latest_version = latestVersion,
+                    firstVersion = firstVersion,
+                    latestVersion = latestVersion,
                     langTag = langTag,
                 }
             };
 
             var json = JsonUtility.ToJson(payload);
             var response = await client.SendAsync(UnityWebRequest.kHttpVerbPOST, "/v2/account/authenticate/custom?create=true", json, false);
-            var result = NakamaClient.Deserialize<NakamaAuthenticationResult>(response, "custom authentication");
+            var result = NakamaClient.Deserialize<AuthenticationResult>(response, "custom authentication");
             if (result == null || string.IsNullOrWhiteSpace(result.token))
             {
                 throw new NakamaException("Custom authentication returned no session token.", 200, response, false);
@@ -94,22 +146,18 @@ namespace TinyNakama.Helpers
             return result;
         }
 
-        public async Task<AccountVariant> GetVariant()
+        public async Task<Account> GetAccount()
         {
             try
             {
                 var response = await client.RpcAsync("account_get", "{}");
-                var metadata = JObject.Parse(response).SelectToken("data.user.metadata");
-                var name = metadata?.Value<string>("variant_name");
-                if (string.IsNullOrEmpty(name)) return new AccountVariant();
-
-                var value = metadata.Value<string>("variant_value");
-                return new AccountVariant { name = name, value = string.IsNullOrEmpty(value) ? "A" : value };
+                var accountResponse = NakamaClient.Deserialize<AccountResponse>(response, "account_get");
+                return account = accountResponse.data;
             }
             catch (Exception e)
             {
                 Debug.LogError($"variant parse error: {e.Message}");
-                return new AccountVariant();
+                return null;
             }
         }
 
