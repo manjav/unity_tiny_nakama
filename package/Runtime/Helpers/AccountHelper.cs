@@ -52,7 +52,7 @@ namespace TinyNakama.Helpers
     {
         public string langTag;
         public string timezone;
-        public AccountMetadata metadata;
+        public Dictionary<string, object> metadata;
         public string displayName;
         public string location;
         public long createTime;
@@ -62,18 +62,6 @@ namespace TinyNakama.Helpers
         public string userId;
         public bool online;
         public int edgeCount;
-    }
-
-    [Serializable]
-    public class AccountMetadata
-    {
-        public string lastOffer;
-        public string variantName;
-        public string firstVersion;
-        public string variantValue;
-        public string latestVersion;
-        public string store;
-        public List<AccountDevice> devices;
     }
 
     [Serializable]
