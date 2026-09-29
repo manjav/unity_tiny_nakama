@@ -81,6 +81,12 @@ namespace TinyNakama.Helpers
         public Dictionary<string, object> value;
     }
 
+    [Serializable]
+    public class AccountTotal{
+        public Account account;
+        public List<AccountStorage> storage;
+    }
+
     public class FacebookLoginResult
     {
         public bool linked;
