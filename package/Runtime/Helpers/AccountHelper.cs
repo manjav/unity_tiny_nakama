@@ -82,7 +82,15 @@ namespace TinyNakama.Helpers
     }
 
     [Serializable]
-    public class AccountTotal{
+    public class CommandResult
+    {
+        public int count;
+        public AccountTotal data;
+    }
+
+    [Serializable]
+    public class AccountTotal
+    {
         public Account account;
         public List<AccountStorage> storage;
     }
