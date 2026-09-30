@@ -8,7 +8,7 @@ namespace TinyNakama.Helpers
     {
         public LeaderboardHelper(NakamaClient client) : base(client) { }
 
-        public async Task<LeaderboardList> Records(string leaderboardId, int limit = 50, string cursor = null)
+        public async Task<LeaderboardList> Records(string leaderboardId, int limit = 100, string cursor = null)
         {
             var path = $"/v2/leaderboard/{Uri.EscapeDataString(leaderboardId)}?limit={limit}";
             if (!string.IsNullOrEmpty(cursor)) path += $"&cursor={Uri.EscapeDataString(cursor)}";
