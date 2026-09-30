@@ -3,10 +3,11 @@ using System;
 namespace TinyNakama
 {
     [Serializable]
-    public sealed class NakamaSyncResult
+    public sealed class NakamaResponse<T>
     {
-        public int status;
+        public NakamaStatus status;
         public string message;
+        public T data;
     }
 
     abstract public class NakamaHelper
@@ -29,6 +30,6 @@ namespace TinyNakama
 
     public enum NakamaStatus
     {
-        NotEnough = -1, AlreadyExists = -3, Success = 0, Forbidden = 403, NotFound = 404, Unavailable = 503, Unknown = 999
+        NotEnough = -1, InvalidData = -2, AlreadyExists = -3, Success = 0, Forbidden = 403, NotFound = 404, Unavailable = 503, Unknown = 999
     }
 }
