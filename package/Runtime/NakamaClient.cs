@@ -26,17 +26,17 @@ namespace TinyNakama
             LeaderboardHelper = new LeaderboardHelper(this);
         }
 
-        public async Task<string> RpcAsync(string rpcId, string json = null, bool validateSyncResult = true)
+        public async Task<string> RpcAsync(string rpcId, string json = null)
         {
             var path = $"/v2/rpc/{Uri.EscapeDataString(rpcId)}?unwrap";
             var response = await SendAsync(UnityWebRequest.kHttpVerbPOST, path, json, true);
-            if (validateSyncResult) ValidateSyncResult(rpcId, response);
+            // if (validateSyncResult) ValidateSyncResult(rpcId, response);
             return response;
         }
 
-        public async Task<T> RpcAsync<T>(string rpcId, string json = null, bool validateSyncResult = true)
+        public async Task<T> RpcAsync<T>(string rpcId, string json = null)
         {
-            return Deserialize<T>(await RpcAsync(rpcId, json, validateSyncResult), rpcId);
+            return Deserialize<T>(await RpcAsync(rpcId, json), rpcId);
         }
 
         public async Task<string> SendAsync(string method, string path, string json = null, bool requiresSession = true)
@@ -93,12 +93,12 @@ namespace TinyNakama
             }
         }
 
-        private static void ValidateSyncResult(string rpcId, string response)
+        /* private static void ValidateResult(string rpcId, string response)
         {
-            NakamaSyncResult result;
+            NakamaResult<string> result;
             try
             {
-                result = JsonUtility.FromJson<NakamaSyncResult>(response);
+                result = JsonUtility.FromJson<NakamaResult<string>>(response);
             }
             catch (Exception e)
             {
@@ -110,9 +110,8 @@ namespace TinyNakama
             {
                 throw new NakamaException($"RPC '{rpcId}' failed: {result.message}", 200, response, false, (NakamaStatus)result.status);
             }
-        }
+        } */
 
         private static string ToBase64(string serverKey) => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{serverKey}:"));
-
     }
 }
