@@ -74,7 +74,7 @@ namespace TinyNakama
             }
         }
 
-        public static T Deserialize<T>(string response, string operation, bool snakeMoed = false)
+        public static T Deserialize<T>(string response, string operation, bool snakeMode = false)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace TinyNakama
                 {
                     ContractResolver = new DefaultContractResolver()
                     {
-                        NamingStrategy = snakeMoed ? new SnakeCaseNamingStrategy() : null
+                        NamingStrategy = snakeMode ? new SnakeCaseNamingStrategy() : null
                     }
                 };
                 return JsonConvert.DeserializeObject<T>(response, settings);
