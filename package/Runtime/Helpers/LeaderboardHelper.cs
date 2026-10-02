@@ -52,9 +52,9 @@ namespace TinyNakama.Helpers
         public long score;
         public int rank;
         public string metadata;
-        public string createTime;
-        public string updateTime;
-        public string expiryTime;
+        public DateTime createTime;
+        public DateTime updateTime;
+        public DateTime expiryTime;
         public int numScore, maxNumScore;
         public LeaderboardRecordInfo info;
     }
@@ -62,6 +62,7 @@ namespace TinyNakama.Helpers
     [Serializable]
     public sealed class LeaderboardRecordInfo
     {
+        public int streak;
         public int avatarUrl;
         public string displayName;
         public string location;
