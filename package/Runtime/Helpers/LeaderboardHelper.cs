@@ -68,4 +68,10 @@ namespace TinyNakama.Helpers
         public string location;
     }
 
+    [Serializable]
+    public sealed class Tournament
+    {
+        public string id,title,description;
+        public long startTime, startActive, endActive, duration;
+    }
 }
