@@ -93,6 +93,7 @@ namespace TinyNakama.Helpers
     {
         public Account account;
         public List<AccountStorage> storage;
+        public Dictionary<string, object> rules;
     }
 
     public class FacebookLoginResult
