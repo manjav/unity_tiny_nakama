@@ -16,7 +16,7 @@ namespace TinyNakama
         public LeaderboardHelper LeaderboardHelper { get; private set; }
 
         private readonly NakamaSettings settings;
-        public string sessionToken;
+        public string sessionToken, refreshToken;
         public NakamaClient(NakamaSettings settings)
         {
             this.settings = settings;
@@ -29,7 +29,7 @@ namespace TinyNakama
         public async Task<string> RpcAsync(string rpcId, string json = null)
         {
             var path = $"/v2/rpc/{Uri.EscapeDataString(rpcId)}?unwrap";
-            var response = await SendAsync(UnityWebRequest.kHttpVerbPOST, path, json, true);
+            var response = await SendAsync(UnityWebRequest.kHttpVerbPOST, path, json, sessionToken);
             // if (validateSyncResult) ValidateSyncResult(rpcId, response);
             return response;
         }
@@ -39,13 +39,8 @@ namespace TinyNakama
             return Deserialize<T>(await RpcAsync(rpcId, json), rpcId);
         }
 
-        public async Task<string> SendAsync(string method, string path, string json = null, bool requiresSession = true)
+        public async Task<string> SendAsync(string method, string path, string json = null, string token = null)
         {
-            if (requiresSession && string.IsNullOrWhiteSpace(sessionToken))
-            {
-                throw new InvalidOperationException("A Nakama session token is required.");
-            }
-
             if (!path.StartsWith("/")) path = "/" + path;
 
             var url = settings.BaseUrl + path;
@@ -59,7 +54,7 @@ namespace TinyNakama
                 request.timeout = settings.TimeoutSeconds;
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Accept", "application/json");
-                request.SetRequestHeader("Authorization", requiresSession ? $"Bearer {sessionToken}" : $"Basic {ToBase64(settings.ServerKey)}");
+                request.SetRequestHeader("Authorization", token == null ? $"Basic {ToBase64(settings.ServerKey)}" : $"Bearer {token}");
 
                 var operation = request.SendWebRequest();
                 while (!operation.isDone) await Task.Yield();
