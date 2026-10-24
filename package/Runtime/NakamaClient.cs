@@ -17,6 +17,7 @@ namespace TinyNakama
 
         private readonly NakamaSettings settings;
         public string sessionToken;
+        public string refreshToken;
         public NakamaClient(NakamaSettings settings)
         {
             this.settings = settings;
@@ -46,6 +47,33 @@ namespace TinyNakama
                 throw new InvalidOperationException("A Nakama session token is required.");
             }
 
+            var token = sessionToken;
+            try
+            {
+                return await SendRequestAsync(method, path, json, requiresSession, token);
+            }
+            catch (NakamaException e) when (requiresSession && e.StatusCode == 401)
+            {
+                await RefreshSessionAsync();
+                return await SendRequestAsync(method, path, json, true, sessionToken);
+            }
+        }
+
+        private async Task RefreshSessionAsync()
+        {
+            var json = JsonConvert.SerializeObject(new { token = refreshToken });
+            var response = await SendRequestAsync(UnityWebRequest.kHttpVerbPOST,
+                "/v2/account/session/refresh", json, false, null);
+            var result = Deserialize<AuthenticationResult>(response, "session refresh");
+
+            sessionToken = result.token;
+            refreshToken = result.refreshToken;
+
+            Debug.Log("<color=cyan>NAKAMA session refreshed successfully</color>");
+        }
+
+        private async Task<string> SendRequestAsync(string method, string path, string json, bool requiresSession, string token)
+        {
             if (!path.StartsWith("/")) path = "/" + path;
 
             var url = settings.BaseUrl + path;
@@ -59,7 +87,7 @@ namespace TinyNakama
                 request.timeout = settings.TimeoutSeconds;
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Accept", "application/json");
-                request.SetRequestHeader("Authorization", requiresSession ? $"Bearer {sessionToken}" : $"Basic {ToBase64(settings.ServerKey)}");
+                request.SetRequestHeader("Authorization", requiresSession ? $"Bearer {token}" : $"Basic {ToBase64(settings.ServerKey)}");
 
                 var operation = request.SendWebRequest();
                 while (!operation.isDone) await Task.Yield();

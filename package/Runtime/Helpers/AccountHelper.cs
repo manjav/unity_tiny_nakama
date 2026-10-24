@@ -26,6 +26,7 @@ namespace TinyNakama.Helpers
     public sealed class AuthenticationResult
     {
         public string token;
+        [JsonProperty("refresh_token")]
         public string refreshToken;
         public bool created;
     }
@@ -153,6 +154,7 @@ namespace TinyNakama.Helpers
             }
 
             client.sessionToken = result.token;
+            client.refreshToken = result.refreshToken;
             return result;
         }
 
