@@ -1,6 +1,6 @@
 {
   "name": "tech.geran.unity-tiny-nakama",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "Unity Tiny Nakama",
   "description": "Lightweight Nakama client for Unity.",
   "unity": "6.0",
