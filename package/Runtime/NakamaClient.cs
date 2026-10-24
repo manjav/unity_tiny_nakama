@@ -61,8 +61,19 @@ namespace TinyNakama
                 var body = request.downloadHandler.text;
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.Log("NAKAMA request failed " + $"url {url} {json} ({request.responseCode}): {request.error}\n body: {body}");
-                    throw new NakamaException($"Nakama request failed " + $"({request.responseCode}): {request.error}", request.responseCode, body, request.result == UnityWebRequest.Result.ConnectionError);
+                    if (!path.Contains("/v2/account/session/refresh") && request.responseCode == 401)
+                    {
+                        var response = await SendAsync(UnityWebRequest.kHttpVerbPOST, "/v2/account/session/refresh", "{\"token\" : \"" + refreshToken + "\" }", null);
+                        var result = Deserialize<AuthenticationResult>(response, "refresh token", true);
+                        sessionToken = result.token;
+                        refreshToken = result.refreshToken;
+                        return await SendAsync(method, path, json, token != null ? sessionToken : null);
+                    }
+                    else
+                    {
+                        Debug.Log("NAKAMA request failed " + $"url {url} {json} ({request.responseCode}): {request.error}\n body: {body}");
+                        throw new NakamaException($"Nakama request failed " + $"({request.responseCode}): {request.error}", request.responseCode, body, request.result == UnityWebRequest.Result.ConnectionError);
+                    }
                 }
                 Debug.Log("NAKAMA request success " + $"url {url} {json} body: {body}");
                 return body;

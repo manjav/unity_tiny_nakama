@@ -145,14 +145,15 @@ namespace TinyNakama.Helpers
             };
 
             var json = JsonUtility.ToJson(payload);
-            var response = await client.SendAsync(UnityWebRequest.kHttpVerbPOST, "/v2/account/authenticate/custom?create=true", json, false);
-            var result = NakamaClient.Deserialize<AuthenticationResult>(response, "custom authentication");
+            var response = await client.SendAsync(UnityWebRequest.kHttpVerbPOST, "/v2/account/authenticate/custom?create=true", json);
+            var result = NakamaClient.Deserialize<AuthenticationResult>(response, "custom authentication", true);
             if (result == null || string.IsNullOrWhiteSpace(result.token))
             {
                 throw new NakamaException("Custom authentication returned no session token.", 200, response, false);
             }
 
             client.sessionToken = result.token;
+            client.refreshToken = result.refreshToken;
             return result;
         }
 
