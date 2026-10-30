@@ -12,7 +12,7 @@ namespace TinyNakama.Helpers
         {
             var path = $"/v2/leaderboard/{Uri.EscapeDataString(leaderboardId)}?limit={limit}";
             if (!string.IsNullOrEmpty(cursor)) path += $"&cursor={Uri.EscapeDataString(cursor)}";
-            var response = await client.SendAsync(UnityWebRequest.kHttpVerbGET, path, client.sessionToken);
+            var response = await client.SendAsync(UnityWebRequest.kHttpVerbGET, path, token: client.sessionToken);
             var result = NakamaClient.Deserialize<LeaderboardList>(response, "leaderboard list", true);
             foreach (var record in result.records)
             {
@@ -24,7 +24,7 @@ namespace TinyNakama.Helpers
         public async Task<LeaderboardList> GetAroundOwner(string leaderboardId, string ownerId, int limit = 3)
         {
             var path = $"/v2/leaderboard/{Uri.EscapeDataString(leaderboardId)}/owner/{Uri.EscapeDataString(ownerId)}?limit={limit}";
-            var response = await client.SendAsync(UnityWebRequest.kHttpVerbGET, path, client.sessionToken);
+            var response = await client.SendAsync(UnityWebRequest.kHttpVerbGET, path, token: client.sessionToken);
             var result = NakamaClient.Deserialize<LeaderboardList>(response, "leaderboard around owner", true);
             foreach (var record in result.records)
             {
