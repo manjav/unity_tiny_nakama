@@ -117,15 +117,15 @@ namespace TinyNakama.Helpers
         public AccountHelper(NakamaClient client) : base(client) { }
 
         public async Task<AuthenticationResult> AuthenticateCustom(string id,
-        string device,
-         string displayName,
-         string avatarUrl,
-         string location,
-         string timezone,
-         string store,
-        string firstVersion,
-         string latestVersion,
-         string langTag)
+            string device = null,
+            string displayName = null,
+            string avatarUrl = null,
+            string location = null,
+            string timezone = null,
+            string store = null,
+            string firstVersion = null,
+            string latestVersion = null,
+            string langTag = null)
         {
             var payload = new CustomAuthenticationRequest
             {
@@ -144,7 +144,7 @@ namespace TinyNakama.Helpers
                 }
             };
 
-            var json = JsonUtility.ToJson(payload);
+            var json = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
             var response = await client.SendAsync(UnityWebRequest.kHttpVerbPOST, "/v2/account/authenticate/custom?create=true", json);
             var result = NakamaClient.Deserialize<AuthenticationResult>(response, "custom authentication", true);
             if (result == null || string.IsNullOrWhiteSpace(result.token))
