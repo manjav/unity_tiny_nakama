@@ -19,7 +19,7 @@ namespace TinyNakama.Helpers
     [Serializable]
     public sealed class AuthenticationVars
     {
-        public string device, displayName, avatarUrl, location, timezone, store, firstVersion, latestVersion, langTag;
+        public string oldId, device, displayName, avatarUrl, location, timezone, store, firstVersion, latestVersion, langTag;
     }
 
     [Serializable]
@@ -125,7 +125,8 @@ namespace TinyNakama.Helpers
             string store = null,
             string firstVersion = null,
             string latestVersion = null,
-            string langTag = null)
+            string langTag = null,
+            string oldId = null)
         {
             var payload = new CustomAuthenticationRequest
             {
@@ -141,6 +142,7 @@ namespace TinyNakama.Helpers
                     firstVersion = firstVersion,
                     latestVersion = latestVersion,
                     langTag = langTag,
+                    oldId = oldId
                 }
             };
 
