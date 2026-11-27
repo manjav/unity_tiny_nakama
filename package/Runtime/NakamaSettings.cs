@@ -7,8 +7,8 @@ namespace TinyNakama
     public sealed class NakamaSettings
     {
         [SerializeField] private int timeoutSeconds = 30;
-        [SerializeField] private string url = "https://";
-        [SerializeField] private string serverKey = "default-server-key";
+        public string url = "https://";
+        public string serverKey = "default-server-key";
         public string BaseUrl => url.TrimEnd('/');
         public string ServerKey => serverKey;
         public int TimeoutSeconds => timeoutSeconds;
